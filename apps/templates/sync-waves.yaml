@@ -8,12 +8,21 @@ metadata:
 spec:
   destination:
     namespace: sync-waves
-    server: {{ .Values.spec.destination.server }}
+    server: https://kubernetes.default.svc
   project: default
-  source:
-    path: sync-waves
-    repoURL: {{ .Values.spec.source.repoURL }}
-    targetRevision: {{ .Values.spec.source.targetRevision }}
+  sources:
+    - path: sync-waves
+      repoURL: {{ .Values.helmChartsRepoURL }}
+      targetRevision: {{ .Values.helmChartsTargetRevision }}
+      helm:
+        valueFiles:
+          - values.yaml
+          - $values/{{ .Values.env.id }}/{{ .Values.env.name }}/sync-waves.yaml
+        ignoreMissingValueFiles: true
+    - repoURL: {{ .Values.helmValuesRepoURL }}
+      targetRevision: {{ .Values.helmValuesTargetRevision }}
+      ref: values
+
   # Sync policy
   syncPolicy:
     automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.

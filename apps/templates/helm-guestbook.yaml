@@ -8,13 +8,21 @@ metadata:
 spec:
   destination:
     namespace: helm-guestbook
-    server: {{ .Values.spec.destination.server }}
+    server: https://kubernetes.default.svc
   project: default
-  source:
-    path: helm-guestbook
-    repoURL: {{ .Values.spec.source.repoURL }}
-    targetRevision: {{ .Values.spec.source.targetRevision }}
-    
+  sources:
+    - path: helm-guestbook
+      repoURL: {{ .Values.helmChartsRepoURL }}
+      targetRevision: {{ .Values.helmChartsTargetRevision }}
+      helm:
+        valueFiles:
+          - values.yaml
+          - $values/{{ .Values.env.id }}/{{ .Values.env.name }}/helm-guestbook.yaml
+        ignoreMissingValueFiles: true
+    - repoURL: {{ .Values.helmValuesRepoURL }}
+      targetRevision: {{ .Values.helmValuesTargetRevision }}
+      ref: values
+
   # Sync policy
   syncPolicy:
     automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
