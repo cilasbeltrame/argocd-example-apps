@@ -17,7 +17,7 @@ spec:
       helm:
         valueFiles:
           - values.yaml
-          - $values/{{ .Values.env.id }}/{{ .Values.env.name }}/kustomize-guestbook.yaml
+          - $values/{{ .Values.cloud }}/{{ .Values.env.id }}/{{ .Values.env.name }}/kustomize-guestbook.yaml
         ignoreMissingValueFiles: true
     - repoURL: {{ .Values.helmValuesRepoURL }}
       targetRevision: {{ .Values.helmValuesTargetRevision }}
